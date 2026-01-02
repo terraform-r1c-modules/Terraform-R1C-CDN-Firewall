@@ -4,7 +4,7 @@
 ![Version](https://img.shields.io/github/v/release/terraform-r1c-modules/terraform-r1c-cdn-firewall?logo=github&color=red&label=Version)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 
-Terraform module to manage ArvanCloud CDN DNS records with support for all record types.
+Terraform module to manage ArvanCloud CDN Firewall resource.
 
 ## Requirements
 
@@ -12,6 +12,13 @@ Terraform module to manage ArvanCloud CDN DNS records with support for all recor
 | -------------------------------------------------------------------------------- | -------- |
 | [terraform](https://developer.hashicorp.com/terraform)                           | >= 1.5   |
 | [arvancloud](https://git.arvancloud.ir/arvancloud/terraform-provider-arvancloud) | >= 0.2.2 |
+
+## Important Notes
+
+> [!WARNING]
+> **Import Required**: The main firewall resource cannot be created from scratch. The firewall settings already exist for your domain. You must **import** the existing resource before applying changes.
+>
+> **No Deletion**: Due to API limitations, destroying this resource will remove it from Terraform state but will not delete the actual firewall settings.
 
 ## Usage
 
