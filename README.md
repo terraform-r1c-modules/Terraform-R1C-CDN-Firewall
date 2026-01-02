@@ -24,8 +24,8 @@ module "cdn_firewall" {
   domain = "example.ir"
 
   firewall_settings = {
-    default_action = "allow"
-    verify_sni     = true
+    action     = "allow"
+    verify_sni = true
   }
 
   firewall_rules = [
@@ -48,10 +48,8 @@ module "cdn_firewall" {
   domain = "example.ir"
 
   firewall_settings = {
-    default_action        = "allow"
-    verify_sni            = true
-    skip_global_whitelist = false
-    skip_global_firewall  = false
+    action     = "allow"
+    verify_sni = true
   }
 
   firewall_rules = [
@@ -60,7 +58,6 @@ module "cdn_firewall" {
       name        = "geo-block"
       filter_expr = "ip.geoip.country in {\"CN\" \"RU\"}"
       action      = "deny"
-      priority    = 1
       is_enabled  = true
       note        = "Block high-risk countries"
     },
@@ -70,11 +67,12 @@ module "cdn_firewall" {
       filter_expr = "http.request.uri.path contains \"/admin\""
       action      = "challenge"
       action_details = {
-        mode       = 3  # Captcha
-        ttl        = 3600
-        https_only = true
+        challenge = {
+          mode       = 3  # Captcha
+          ttl        = 3600
+          https_only = true
+        }
       }
-      priority   = 2
       is_enabled = true
     },
     # Bypass checks for static assets
@@ -83,11 +81,12 @@ module "cdn_firewall" {
       filter_expr = "http.request.uri.path matches \".*\\.(css|js|png|jpg)$\""
       action      = "bypass"
       action_details = {
-        waf       = true
-        rlimit    = true
-        challenge = false
+        bypass = {
+          waf       = true
+          rlimit    = true
+          challenge = false
+        }
       }
-      priority   = 3
       is_enabled = true
     }
   ]
@@ -106,13 +105,11 @@ module "cdn_firewall" {
 
 ### firewall_settings Object
 
-| Attribute                | Description                           | Type     | Default   |
-| ------------------------ | ------------------------------------- | -------- | --------- |
-| `default_action`         | Default action for unmatched requests | `string` | `"allow"` |
-| `default_action_details` | Details for bypass/challenge actions  | `object` | `null`    |
-| `verify_sni`             | Verify SNI matches hostname           | `bool`   | `true`    |
-| `skip_global_whitelist`  | Skip global whitelist for domain      | `bool`   | `false`   |
-| `skip_global_firewall`   | Skip global firewall for domain       | `bool`   | `false`   |
+| Attribute        | Description                           | Type     | Default   |
+| ---------------- | ------------------------------------- | -------- | --------- |
+| `action`         | Default action for unmatched requests | `string` | `"allow"` |
+| `action_details` | Details for bypass/challenge actions  | `object` | `null`    |
+| `verify_sni`     | Verify SNI matches hostname           | `bool`   | `true`    |
 
 ### firewall_rules Object
 
@@ -122,25 +119,28 @@ module "cdn_firewall" {
 | `filter_expr`    | Wireshark-like filter expression (3-5000 chars) | `string` |   Yes    |
 | `action`         | Rule action: allow, deny, bypass, challenge     | `string` |   Yes    |
 | `action_details` | Details for bypass/challenge actions            | `object` |    No    |
-| `priority`       | Rule priority (lower = higher priority)         | `number` |    No    |
 | `is_enabled`     | Whether the rule is enabled                     | `bool`   |    No    |
 | `note`           | Optional note/description                       | `string` |    No    |
 
-### action_details Object (for bypass)
+### action_details Object
 
-| Attribute   | Description          | Type   | Default |
-| ----------- | -------------------- | ------ | ------- |
-| `rlimit`    | Bypass rate limiting | `bool` | `false` |
-| `challenge` | Bypass challenge     | `bool` | `false` |
-| `waf`       | Bypass WAF           | `bool` | `false` |
+The `action_details` contains nested objects for `bypass` or `challenge` actions:
 
-### action_details Object (for challenge)
+#### bypass (when action = "bypass")
 
-| Attribute    | Description                                       | Type     | Default |
-| ------------ | ------------------------------------------------- | -------- | ------- |
-| `mode`       | Challenge mode: 1=Cookie, 2=JavaScript, 3=Captcha | `number` | n/a     |
-| `ttl`        | Time-to-live in seconds (10-31536000)             | `number` | n/a     |
-| `https_only` | Require HTTPS for challenge                       | `bool`   | `false` |
+| Attribute   | Description          | Type   | Required |
+| ----------- | -------------------- | ------ | :------: |
+| `rlimit`    | Bypass rate limiting | `bool` |   Yes    |
+| `challenge` | Bypass challenge     | `bool` |   Yes    |
+| `waf`       | Bypass WAF           | `bool` |   Yes    |
+
+#### challenge (when action = "challenge")
+
+| Attribute    | Description                                       | Type     | Required |
+| ------------ | ------------------------------------------------- | -------- | :------: |
+| `mode`       | Challenge mode: 1=Cookie, 2=JavaScript, 3=Captcha | `number` |   Yes    |
+| `ttl`        | Time-to-live in seconds                           | `number` |   Yes    |
+| `https_only` | Require HTTPS for challenge                       | `bool`   |   Yes    |
 
 ## Outputs
 

@@ -5,12 +5,10 @@
 output "firewall_settings" {
   description = "The firewall settings configuration for the domain"
   value = var.enable_firewall_settings ? {
-    domain                = var.domain
-    is_enabled            = true
-    default_action        = var.firewall_settings.default_action
-    verify_sni            = var.firewall_settings.verify_sni
-    skip_global_whitelist = var.firewall_settings.skip_global_whitelist
-    skip_global_firewall  = var.firewall_settings.skip_global_firewall
+    domain     = var.domain
+    is_enabled = try(arvancloud_cdn_domain_firewall.this[0].is_enabled, null)
+    action     = var.firewall_settings.action
+    verify_sni = var.firewall_settings.verify_sni
   } : null
 }
 
@@ -21,11 +19,10 @@ output "firewall_settings" {
 output "firewall_rules" {
   description = "Map of all created firewall rules with their configurations"
   value = {
-    for name, rule in arvancloud_cdn_firewall_rule.this : name => {
+    for name, rule in arvancloud_cdn_domain_firewall_rule.this : name => {
       id         = rule.id
       name       = rule.name
       action     = rule.action
-      priority   = rule.priority
       is_enabled = rule.is_enabled
     }
   }
@@ -33,12 +30,12 @@ output "firewall_rules" {
 
 output "firewall_rule_ids" {
   description = "List of all firewall rule IDs"
-  value       = [for rule in arvancloud_cdn_firewall_rule.this : rule.id]
+  value       = [for rule in arvancloud_cdn_domain_firewall_rule.this : rule.id]
 }
 
 output "firewall_rules_count" {
   description = "Total number of firewall rules created"
-  value       = length(arvancloud_cdn_firewall_rule.this)
+  value       = length(arvancloud_cdn_domain_firewall_rule.this)
 }
 
 # -----------------------------------------------------------------------------

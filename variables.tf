@@ -25,31 +25,29 @@ variable "enable_firewall_settings" {
 variable "firewall_settings" {
   description = "Domain firewall configuration settings"
   type = object({
-    default_action = optional(string, "allow")
-    default_action_details = optional(object({
-      # Bypass action options
-      rlimit    = optional(bool, false)
-      challenge = optional(bool, false)
-      waf       = optional(bool, false)
-      # Challenge action options
-      mode       = optional(number) # 1: Cookie, 2: Javascript, 3: Captcha
-      ttl        = optional(number)
-      https_only = optional(bool)
+    action = optional(string, "allow")
+    action_details = optional(object({
+      bypass = optional(object({
+        waf       = bool
+        challenge = bool
+        rlimit    = bool
+      }))
+      challenge = optional(object({
+        mode       = number # 1: Cookie, 2: Javascript, 3: Captcha
+        ttl        = number
+        https_only = bool
+      }))
     }))
-    verify_sni            = optional(bool, true)
-    skip_global_whitelist = optional(bool, false)
-    skip_global_firewall  = optional(bool, false)
+    verify_sni = optional(bool, true)
   })
   default = {
-    default_action        = "allow"
-    verify_sni            = true
-    skip_global_whitelist = false
-    skip_global_firewall  = false
+    action     = "allow"
+    verify_sni = true
   }
 
   validation {
-    condition     = contains(["allow", "deny", "drop", "bypass", "challenge"], var.firewall_settings.default_action)
-    error_message = "default_action must be one of: allow, deny, drop, bypass, challenge."
+    condition     = contains(["allow", "deny", "bypass", "challenge"], var.firewall_settings.action)
+    error_message = "action must be one of: allow, deny, bypass, challenge."
   }
 }
 
@@ -64,16 +62,17 @@ variable "firewall_rules" {
     filter_expr = string
     action      = string
     action_details = optional(object({
-      # Bypass action options
-      rlimit    = optional(bool)
-      challenge = optional(bool)
-      waf       = optional(bool)
-      # Challenge action options
-      mode       = optional(number) # 1: Cookie, 2: Javascript, 3: Captcha
-      ttl        = optional(number)
-      https_only = optional(bool)
+      bypass = optional(object({
+        waf       = bool
+        challenge = bool
+        rlimit    = bool
+      }))
+      challenge = optional(object({
+        mode       = number # 1: Cookie, 2: Javascript, 3: Captcha
+        ttl        = number
+        https_only = bool
+      }))
     }))
-    priority   = optional(number)
     is_enabled = optional(bool, true)
     note       = optional(string, "")
   }))

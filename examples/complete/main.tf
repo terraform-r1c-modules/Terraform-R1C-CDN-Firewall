@@ -14,10 +14,8 @@ module "cdn_firewall" {
   # Firewall settings configuration
   enable_firewall_settings = true
   firewall_settings = {
-    default_action        = "allow"
-    verify_sni            = true
-    skip_global_whitelist = false
-    skip_global_firewall  = false
+    action     = "allow"
+    verify_sni = true
   }
 
   # Firewall rules
@@ -26,7 +24,6 @@ module "cdn_firewall" {
       name        = "block-bad-countries"
       filter_expr = "ip.geoip.country in {\"CN\" \"RU\"}"
       action      = "deny"
-      priority    = 1
       is_enabled  = true
       note        = "Block traffic from specific countries"
     },
@@ -34,7 +31,6 @@ module "cdn_firewall" {
       name        = "allow-internal-ips"
       filter_expr = "ip.src in {192.168.0.0/16 10.0.0.0/8}"
       action      = "allow"
-      priority    = 2
       is_enabled  = true
       note        = "Allow internal network traffic"
     },
@@ -43,11 +39,12 @@ module "cdn_firewall" {
       filter_expr = "http.request.uri.path contains \"/admin\""
       action      = "challenge"
       action_details = {
-        mode       = 2 # Javascript challenge
-        ttl        = 3600
-        https_only = true
+        challenge = {
+          mode       = 2 # Javascript challenge
+          ttl        = 3600
+          https_only = true
+        }
       }
-      priority   = 3
       is_enabled = true
       note       = "Challenge requests to admin paths"
     },
@@ -56,11 +53,12 @@ module "cdn_firewall" {
       filter_expr = "http.request.uri.path matches \".*\\\\.(css|js|png|jpg|gif|ico)$\""
       action      = "bypass"
       action_details = {
-        waf       = true
-        rlimit    = true
-        challenge = false
+        bypass = {
+          waf       = true
+          rlimit    = true
+          challenge = false
+        }
       }
-      priority   = 4
       is_enabled = true
       note       = "Bypass security checks for static assets"
     }

@@ -11,8 +11,8 @@ module "cdn_firewall" {
 
   # Simple firewall settings
   firewall_settings = {
-    default_action = "allow"
-    verify_sni     = true
+    action     = "allow"
+    verify_sni = true
   }
 
   # Single rule to block specific IPs
