@@ -18,6 +18,10 @@ Terraform module to manage ArvanCloud CDN Firewall resource.
 > [!WARNING]
 > **Import Required**: The main firewall resource cannot be created from scratch. The firewall settings already exist for your domain. You must **import** the existing resource before applying changes.
 >
+> ```bash
+> terraform import "module.firewall.arvancloud_cdn_domain_firewall.this[0]" example.ir
+> ```
+>
 > **No Deletion**: Due to API limitations, destroying this resource will remove it from Terraform state but will not delete the actual firewall settings.
 
 ## Usage
