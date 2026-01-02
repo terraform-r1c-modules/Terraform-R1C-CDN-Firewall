@@ -13,24 +13,18 @@ resource "arvancloud_cdn_domain_firewall" "this" {
   action     = var.firewall_settings.action
   verify_sni = var.firewall_settings.verify_sni
 
-  action_details {
-    dynamic "bypass" {
-      for_each = var.firewall_settings.action == "bypass" ? [var.firewall_settings.action_details.bypass] : []
-      content {
-        waf       = bypass.value.waf
-        challenge = bypass.value.challenge
-        rlimit    = bypass.value.rlimit
-      }
-    }
+  action_details = {
+    bypass = var.firewall_settings.action == "bypass" ? {
+      waf       = var.firewall_settings.action_details.bypass.waf
+      challenge = var.firewall_settings.action_details.bypass.challenge
+      rlimit    = var.firewall_settings.action_details.bypass.rlimit
+    } : null
 
-    dynamic "challenge" {
-      for_each = var.firewall_settings.action == "challenge" ? [var.firewall_settings.action_details.challenge] : []
-      content {
-        mode       = challenge.value.mode
-        ttl        = challenge.value.ttl
-        https_only = challenge.value.https_only
-      }
-    }
+    challenge = var.firewall_settings.action == "challenge" ? {
+      mode       = var.firewall_settings.action_details.challenge.mode
+      ttl        = var.firewall_settings.action_details.challenge.ttl
+      https_only = var.firewall_settings.action_details.challenge.https_only
+    } : null
   }
 }
 
@@ -50,24 +44,18 @@ resource "arvancloud_cdn_domain_firewall_rule" "this" {
   is_enabled  = each.value.is_enabled
   note        = each.value.note
 
-  action_details {
-    dynamic "bypass" {
-      for_each = each.value.action == "bypass" && each.value.action_details != null ? [each.value.action_details.bypass] : []
-      content {
-        waf       = bypass.value.waf
-        challenge = bypass.value.challenge
-        rlimit    = bypass.value.rlimit
-      }
-    }
+  action_details = {
+    bypass = each.value.action == "bypass" && each.value.action_details != null ? {
+      waf       = each.value.action_details.bypass.waf
+      challenge = each.value.action_details.bypass.challenge
+      rlimit    = each.value.action_details.bypass.rlimit
+    } : null
 
-    dynamic "challenge" {
-      for_each = each.value.action == "challenge" && each.value.action_details != null ? [each.value.action_details.challenge] : []
-      content {
-        mode       = challenge.value.mode
-        ttl        = challenge.value.ttl
-        https_only = challenge.value.https_only
-      }
-    }
+    challenge = each.value.action == "challenge" && each.value.action_details != null ? {
+      mode       = each.value.action_details.challenge.mode
+      ttl        = each.value.action_details.challenge.ttl
+      https_only = each.value.action_details.challenge.https_only
+    } : null
   }
 
   depends_on = [arvancloud_cdn_domain_firewall.this]
