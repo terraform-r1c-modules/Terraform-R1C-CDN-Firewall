@@ -1,15 +1,22 @@
-# ArvanCloud CDN Firewall - Example Configuration
+terraform {
+  required_version = ">= 1.5"
 
-# Configure the ArvanCloud provider
+  required_providers {
+    arvancloud = {
+      source  = "terraform.arvancloud.ir/arvancloud/arvancloud"
+      version = ">= 0.2.2"
+    }
+  }
+}
+
 provider "arvancloud" {
   api_key = var.arvancloud_api_key
 }
 
-# Example: Basic firewall configuration with rules
 module "cdn_firewall" {
   source = "../../"
 
-  domain = "example.ir"
+  domain = var.domain
 
   # Firewall settings configuration
   enable_firewall_settings = true
@@ -63,27 +70,4 @@ module "cdn_firewall" {
       note       = "Bypass security checks for static assets"
     }
   ]
-
-  tags = {
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
-}
-
-# Variables for the example
-variable "arvancloud_api_key" {
-  description = "ArvanCloud API key"
-  type        = string
-  sensitive   = true
-}
-
-# Outputs
-output "firewall_config" {
-  description = "Firewall configuration summary"
-  value       = module.cdn_firewall.firewall_settings
-}
-
-output "created_rules" {
-  description = "Created firewall rules"
-  value       = module.cdn_firewall.firewall_rules
 }

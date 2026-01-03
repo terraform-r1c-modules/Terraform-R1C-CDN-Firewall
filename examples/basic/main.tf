@@ -1,4 +1,13 @@
-# ArvanCloud CDN Firewall - Simple Example
+terraform {
+  required_version = ">= 1.5"
+
+  required_providers {
+    arvancloud = {
+      source  = "terraform.arvancloud.ir/arvancloud/arvancloud"
+      version = ">= 0.2.2"
+    }
+  }
+}
 
 provider "arvancloud" {
   api_key = var.arvancloud_api_key
@@ -7,7 +16,7 @@ provider "arvancloud" {
 module "cdn_firewall" {
   source = "../../"
 
-  domain = "example.ir"
+  domain = var.domain
 
   # Simple firewall settings
   firewall_settings = {
@@ -24,13 +33,4 @@ module "cdn_firewall" {
       is_enabled  = true
     }
   ]
-}
-
-variable "arvancloud_api_key" {
-  type      = string
-  sensitive = true
-}
-
-output "domain" {
-  value = module.cdn_firewall.domain
 }
