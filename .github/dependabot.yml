@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tehran"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "terraform"
+    reviewers:
+      - "hatamiarash7"
+    open-pull-requests-limit: 5

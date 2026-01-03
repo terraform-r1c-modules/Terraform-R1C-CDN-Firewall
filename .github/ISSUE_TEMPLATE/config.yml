@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/terraform-r1c-modules/terraform-r1c-cdn-firewall#readme
+    about: Check the documentation before opening an issue
+  - name: 📚 ArvanCloud Documentation
+    url: https://docs.arvancloud.ir/en/cdn/security/firewall
+    about: Official ArvanCloud CDN Firewall documentation

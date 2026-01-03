@@ -1,0 +1,60 @@
+name: ❓ Question
+description: Ask a question about using this module
+title: "[Question]: "
+labels: ["question"]
+assignees:
+  - hatamiarash7
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about using this module? We're here to help!
+        Please check the documentation first: README.md
+
+  - type: checkboxes
+    id: checked-docs
+    attributes:
+      label: Have you checked the documentation?
+      description: Please confirm you've reviewed the available documentation.
+      options:
+        - label: I have read the README.md
+          required: true
+        - label: I have checked the examples
+          required: true
+        - label: I have searched existing issues
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: Ask your question here...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide any relevant context for your question.
+      placeholder: |
+        - What are you trying to achieve?
+        - What have you tried so far?
+        - Any relevant configuration?
+    validations:
+      required: false
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant Configuration (if applicable)
+      description: Share any relevant Terraform configuration.
+      render: hcl
+      placeholder: |
+        module "cdn_load_balancer" {
+          source = "..."
+        }
+    validations:
+      required: false
