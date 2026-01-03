@@ -92,13 +92,3 @@ variable "firewall_rules" {
     error_message = "Each rule's filter_expr must be between 3 and 5000 characters."
   }
 }
-
-# -----------------------------------------------------------------------------
-# Common Tags Variable
-# -----------------------------------------------------------------------------
-
-variable "tags" {
-  description = "A map of tags to add to all resources (if supported)"
-  type        = map(string)
-  default     = {}
-}

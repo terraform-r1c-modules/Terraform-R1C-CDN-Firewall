@@ -112,7 +112,6 @@ module "cdn_firewall" {
 | `enable_firewall_settings` | Whether to create the firewall settings resource   | `bool`         | `true`    |    No    |
 | `firewall_settings`        | Domain firewall configuration settings             | `object`       | See below |    No    |
 | `firewall_rules`           | List of firewall rules to create                   | `list(object)` | `[]`      |    No    |
-| `tags`                     | A map of tags to add to resources                  | `map(string)`  | `{}`      |    No    |
 
 ### firewall_settings Object
 
